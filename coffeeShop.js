@@ -53,55 +53,65 @@ class CoffeeShopTill {
       }
     });
     // add the total cost at the bottom of the receipt
-    receipt += `---------------------\nTotal Cost\t£${costOfItemsOrdered.toFixed(
-      2
-    )}\n---------------------`;
+    receipt +=
+      `---------------------\n` +
+      chalk.bgBlue(`Total Cost\t£${costOfItemsOrdered.toFixed(2)}\n`) +
+      `---------------------`;
     console.log(receipt);
     return costOfItemsOrdered;
   }
 
   get priceOfAnItem() {
+    // define a seperate function for the async question to allow the answer to be provided - getter do not allow async
     const asyncQuestion = async () => {
+      // get the item from the user from the list on the screen
       const askWhichItem = await inquirer.prompt(question);
-      item = askWhichItem.getItem;
+      selectedItem = askWhichItem.getItem;
+      // loop through the food and drinks objects
       const itemTypes = ["drinks", "food"];
       itemTypes.forEach((itemType) => {
-        for (const drink in this[itemType]) {
-          if (this[itemType][drink][0] === item) {
-            cost = this[itemType][drink][1];
+        // loop through the objects of different drinks / food items
+        for (const item in this[itemType]) {
+          // check for a match
+          if (this[itemType][item][0] === selectedItem) {
+            cost = this[itemType][item][1];
             console.log(
-              `The cost of a ${item} at ${this.branch} is £${this[itemType][
-                drink
-              ][1].toFixed(2)}`
+              `The cost of a ${selectedItem} at ${this.branch} is £${this[
+                itemType
+              ][item][1].toFixed(2)}`
             );
           }
         }
       });
     };
 
-    const friendlyListOfDrinks = [];
-
+    // create a list of all items for sale - using the friendly terms in the array
+    const friendlyListOfAllItems = [];
+    // loop through the drinks and food objects
     const itemTypes = ["drinks", "food"];
     itemTypes.forEach((itemType) => {
-      for (const drink in this[itemType]) {
-        friendlyListOfDrinks.push(this[itemType][drink][0]);
+      // loop through each drink or food object
+      for (const item in this[itemType]) {
+        // add it to the list
+        friendlyListOfAllItems.push(this[itemType][item][0]);
       }
     });
-    //console.log("friendly list: ",friendlyListOfDrinks)
     const question = [
       {
         type: "list",
         message: "Which item price do you want to check ?",
         name: "getItem",
-        choices: friendlyListOfDrinks,
+        choices: friendlyListOfAllItems,
       },
     ];
-    let item = "";
+    let selectedItem = "";
     let cost = 0;
+    // ask the question not directly from the getter to avoid async clash
     asyncQuestion();
   }
 
   // change price of an item for sale
+  // this one just changes the price of a latter
   set priceOfLatte(price) {
     this.drinks.latte[1] = price;
     this.priceOfLatte;
@@ -136,13 +146,6 @@ class Customer extends CoffeeShopTill {
 const myOrder = ["latte", "flatWhite", "scone", "carrotCake"];
 const chorley = new CoffeeShopTill("Chorley");
 const mike = new Customer("Chorley", "Mike", 5, myOrder, ["food", "drinks"]);
-//console.log("chorley: ", chorley);
-//const amountSpent = chorley.drinksOrdered(myOrder);
-//console.log(amountSpent);
-// console.log("chorley.drinksOrdered: ", chorley.foodOrdered(myOrder));
-// console.log("chorley.drinksOrdered: ", chorley.foodAndDrinksOrdered(myOrder));
-//chorley.priceOfLatte;
-//chorley.priceOfLatte = 3.5; // use = (equals) as it is a setter not a function
 
 //mike.itemsOrdered()
 //mike.canCustomerAffordItems();
