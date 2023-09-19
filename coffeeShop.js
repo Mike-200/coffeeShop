@@ -1,3 +1,6 @@
+import chalk from "chalk";
+import inquirer from "inquirer";
+
 class CoffeeShopTill {
   constructor(branch, order, itemTypes) {
     this.branch = branch;
@@ -57,11 +60,45 @@ class CoffeeShopTill {
     return costOfItemsOrdered;
   }
 
-  // get price of an item for sale
-  get priceOfLatte() {
-    console.log(
-      `The price of a latte is £${this.drinks["latte"][1].toFixed(2)}`
-    );
+  get priceOfAnItem() {
+    const asyncQuestion = async () => {
+      const askWhichItem = await inquirer.prompt(question);
+      item = askWhichItem.getItem;
+      const itemTypes = ["drinks", "food"];
+      itemTypes.forEach((itemType) => {
+        for (const drink in this[itemType]) {
+          if (this[itemType][drink][0] === item) {
+            cost = this[itemType][drink][1];
+            console.log(
+              `The cost of a ${item} at ${this.branch} is £${this[itemType][
+                drink
+              ][1].toFixed(2)}`
+            );
+          }
+        }
+      });
+    };
+
+    const friendlyListOfDrinks = [];
+
+    const itemTypes = ["drinks", "food"];
+    itemTypes.forEach((itemType) => {
+      for (const drink in this[itemType]) {
+        friendlyListOfDrinks.push(this[itemType][drink][0]);
+      }
+    });
+    //console.log("friendly list: ",friendlyListOfDrinks)
+    const question = [
+      {
+        type: "list",
+        message: "Which item price do you want to check ?",
+        name: "getItem",
+        choices: friendlyListOfDrinks,
+      },
+    ];
+    let item = "";
+    let cost = 0;
+    asyncQuestion();
   }
 
   // change price of an item for sale
@@ -97,7 +134,7 @@ class Customer extends CoffeeShopTill {
 }
 
 const myOrder = ["latte", "flatWhite", "scone", "carrotCake"];
-//const chorley = new CoffeeShopTill("Chorley");
+const chorley = new CoffeeShopTill("Chorley");
 const mike = new Customer("Chorley", "Mike", 5, myOrder, ["food", "drinks"]);
 //console.log("chorley: ", chorley);
 //const amountSpent = chorley.drinksOrdered(myOrder);
@@ -107,6 +144,6 @@ const mike = new Customer("Chorley", "Mike", 5, myOrder, ["food", "drinks"]);
 //chorley.priceOfLatte;
 //chorley.priceOfLatte = 3.5; // use = (equals) as it is a setter not a function
 
-//mike.drinksOrdered(myOrder);
 //mike.itemsOrdered()
-mike.canCustomerAffordItems();
+//mike.canCustomerAffordItems();
+chorley.priceOfAnItem;
